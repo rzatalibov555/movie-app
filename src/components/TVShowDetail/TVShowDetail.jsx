@@ -2,8 +2,9 @@ import { FiveStarRating } from "../FiveStarRating/FiveStarRating";
 import s from "./style.module.css";
 
 export function TVShowDetail({tvShow}) {
-
+  // console.log(tvShow)
   return (
+    
     <div className={s.container}>
       <span className={s.title}>{tvShow.name}</span>
       <FiveStarRating rating={tvShow.vote_average} />
