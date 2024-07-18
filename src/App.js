@@ -4,20 +4,40 @@ import logoImg from "./assets/images/logo.png";
 import { Logo } from "./components/Logo/Logo";
 // import { SearchBar } from "./components/SearchBar/SearchBar";
 import { TVShowDetail } from "./components/TVShowDetail/TVShowDetail";
-// import { TVShowList } from "./components/TVShowList/TVShowList";
+import { TVShowList } from "./components/TVShowList/TVShowList";
 import { BACKDROP_BASE_URL } from "./config";
 import s from "./style.module.css";
 
 export function App() {
   
-  const [currentTVShow, setCurrentTVShow] = useState([])
-  // tvShowRecommendations
+  const [currentTVShow, setCurrentTVShow] = useState({})
+  const [tvShowRecommendations, setTvShowRecommendations] = useState([])
 
   async function fetchData() {
-    const response = await TVShowAPI.fetchPopulars()
-    setCurrentTVShow(response)
+    try{
+      const response = await TVShowAPI.fetchPopulars()
+      setCurrentTVShow(response)
+    }catch(error){
+      console.log(error)
+    }
   }
 
+  async function fetchRecommendations(id){
+    try{
+      const response = await TVShowAPI.fetchRecommendations(id);
+      setTvShowRecommendations(response.data.results.splice(0,10));
+      
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+
+  function updateCurrentTVShow(tvShow){
+    setCurrentTVShow(tvShow)
+  }
+
+  // ================================
   useEffect(() => {
     fetchData()
 
@@ -27,11 +47,20 @@ export function App() {
     }
     // unsubscribe
 
-  },[currentTVShow])
+  },[])
+  // ================================
+  // ================================
+  useEffect(() => {
 
-  
+    fetchRecommendations(currentTVShow.id);
 
+    return () => {
+      fetchRecommendations(currentTVShow.id)
+    }
 
+  }, [currentTVShow.id])
+  // ================================
+//  console.log(tvShowRecommendations)
 
   return (
     <div
@@ -59,10 +88,12 @@ export function App() {
         }
       </div>
       <div className="">
-          {/* <TVShowList
+          {
+            currentTVShow && <TVShowList
             tvShowList={tvShowRecommendations}
             onClickItem={updateCurrentTVShow}
-          /> */}
+            />
+          }
       </div>
     </div>
   );
